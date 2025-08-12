@@ -61,7 +61,7 @@ const products = [
 
 const SellerProductPage = () => {
   return (
-    <ScrollView className="flex-1 bg-white px-4 pt-10">
+    <ScrollView className="flex-1 bg-white px-4 pt-10 ">
       <View className="items-center mb-6">
         <Text className="text-xl font-bold mt-7 ">Welcome to ShopMate</Text>
         <Text className="text-gray-500">Your one-stop online store</Text>
