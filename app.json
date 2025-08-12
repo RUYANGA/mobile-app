@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "",
-    "slug": "mobile-move-app",
+    "name": "E-Market",
+    "slug": "E-Market",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logom.png",
@@ -14,7 +14,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/logo1.png",
+        "foregroundImage": "./assets/images/logom.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
@@ -39,6 +39,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "16dfd7c6-b84c-4acf-b2f5-3e64336044c4"
+      }
     }
   }
 }
