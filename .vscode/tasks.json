@@ -1,0 +1,16 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start Android Emulator",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/start-emulator.sh",
+      "args": ["Pixel_9_Pro_XL"],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    }
+  ]
+}

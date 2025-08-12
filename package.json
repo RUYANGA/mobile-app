@@ -1,14 +1,17 @@
 {
-  "name": "mobile-move-app",
+  "name": "mobile",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "emulator:start": "bash ./scripts/start-emulator.sh",
+    "android:watch": "nodemon --watch ./src --ext js,jsx,ts,tsx --exec \"npx react-native run-android\"",
+    "dev:auto": "npm run emulator:start && npm run android:watch"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
@@ -43,9 +46,11 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@react-native-community/cli": "^19.1.1",
     "@types/react": "~19.0.10",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~9.2.0",
+    "nodemon": "^3.1.10",
     "typescript": "~5.8.3"
   },
   "private": true

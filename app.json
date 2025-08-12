@@ -1,22 +1,24 @@
 {
   "expo": {
-    "name": "Move App",
+    "name": "",
     "slug": "mobile-move-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/logo1.png",
+    "icon": "./assets/images/logom.png",
     "scheme": "mobilemoveapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.mobilemoveapp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/logo1.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.anonymous.mobilemoveapp"
     },
     "web": {
       "bundler": "metro",
