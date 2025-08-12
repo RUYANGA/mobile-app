@@ -7,7 +7,7 @@ export default function Index() {
       <ScrollView
         className="flex-1 "
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ minHeight: "100%", }}
+        contentContainerStyle={{ minHeight: "100%" }}
       >
         <View className="flex-1 mt-0">
           <LoginForm/>

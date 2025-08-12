@@ -1,4 +1,3 @@
-
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import React from "react";
 import { Image } from "expo-image";
@@ -9,8 +8,7 @@ const categories = [
   { id: 4, name: "Food" },
 ];
 
-
- const products = [
+const products = [
   {
     id: 1,
     name: "Smartphone",
@@ -47,13 +45,13 @@ const categories = [
     price: "$89",
     img: "https://picsum.photos/200/300?random=6",
   },
-    {
+  {
     id: 7,
     name: "Shoes",
     price: "$89",
     img: "https://picsum.photos/200/300?random=3",
   },
-    {
+  {
     id: 8,
     name: "Shoes",
     price: "$89",
@@ -61,14 +59,30 @@ const categories = [
   },
 ];
 
-const ProductPage = () => {
+const SellerProductPage = () => {
   return (
     <ScrollView className="flex-1 bg-white px-4 pt-10">
       <View className="items-center mb-6">
         <Text className="text-xl font-bold mt-7 ">Welcome to ShopMate</Text>
         <Text className="text-gray-500">Your one-stop online store</Text>
       </View>
-      <Text className="text-lg font-semibold mb-3">Categories</Text>
+      <View className="flex-row justify-between gap-3  items-center ">
+        <Text className="text-lg font-semibold mb-15">Categories</Text>
+        <TouchableOpacity
+          style={{
+            backgroundColor: "#60a5fa",
+            padding: 7,
+            marginBottom:10,
+            borderRadius: 8,
+          }}
+        >
+          <Text
+            style={{ color: "white", fontWeight: "bold", textAlign: "center" }}
+          >
+            Create Product
+          </Text>
+        </TouchableOpacity>
+      </View>
       <View className="flex-row gap-3 mb-6 flex-wrap">
         {categories.map((cat) => (
           <TouchableOpacity
@@ -109,5 +123,4 @@ const ProductPage = () => {
   );
 };
 
-export default ProductPage;
-
+export default SellerProductPage;

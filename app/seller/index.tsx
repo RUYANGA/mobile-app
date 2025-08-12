@@ -1,10 +1,10 @@
 import { View, Text } from 'react-native'
 import React from 'react'
-import ProductPage from '@/components/buyer/buyer'
+import SellerProductPage from '@/components/seller/seller'
 
 const Seller = () => {
   return (
-    <ProductPage/>
+    <SellerProductPage/>
   )
 }
 
