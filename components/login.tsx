@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
-import logo1 from "@/assets/images/logom.png";
+import logo1 from "@/assets/images/icon.png";
 import { AntDesign } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
@@ -35,7 +35,7 @@ export default function Login() {
 
     try {
       // Replace with your real backend URL
-      const response = await fetch("https://e-market-platform.onrender.com/auth/login", {
+      const response = await fetch("https://e-market-api-0k8r.onrender.com/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
