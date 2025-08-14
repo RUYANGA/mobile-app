@@ -16,6 +16,7 @@ import axios from "axios";
 interface OtpVerifyResponse {
   message: string;
   success: boolean;
+  token: string;
 }
 
 const OtpPage = () => {
@@ -64,6 +65,9 @@ const OtpPage = () => {
           ToastAndroid.SHORT,
           ToastAndroid.TOP
         );
+
+        await AsyncStorage.setItem("token", data.token);
+
         router.push("/dashboard/home");
       } else {
         Alert.alert("Error", data.message || "OTP verification failed.");
@@ -88,7 +92,7 @@ const OtpPage = () => {
     >
       <Text className="text-3xl font-bold mb-2">Verify OTP</Text>
       <Text className="text-base text-gray-500 text-center mb-8">
-        Enter the 6-digit code sent to your phone number
+        Enter the 6-digit code sent to your email
       </Text>
 
       <View className="flex-row justify-between w-11/12 mb-8">

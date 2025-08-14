@@ -60,9 +60,8 @@ export default function Register() {
       if (!data.user?.id) {
         throw new Error(data.message || "Registration failed: missing user ID");
       }
-
-      // Save userId and token (if you want)
       await AsyncStorage.setItem("userId", data.user.id);
+      await AsyncStorage.setItem("email",data.user.email)
       if (data.token) {
         await AsyncStorage.setItem("token", data.token);
       }
