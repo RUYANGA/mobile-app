@@ -13,7 +13,7 @@ const WelcomePage = () => {
         {/* Premium Card */}
         <TouchableOpacity
           className="bg-yellow-500 p-6 mb-7 rounded-3xl shadow-2xl"
-          onPress={() => router.push("/buyer")}
+          onPress={() => router.push("/(main)/seller")}
           activeOpacity={0.85}
         >
           <Text className="text-white text-2xl font-bold text-center mb-4">

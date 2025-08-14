@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   SafeAreaView,
   StatusBar,
@@ -53,7 +53,7 @@ export default function Login() {
       }
 
       await AsyncStorage.setItem("token", data.token);
-      router.push("/dashboard/home");
+      router.push("/(main)/dashboard/home");
 
       ToastAndroid.showWithGravity(
         "Login successful!",

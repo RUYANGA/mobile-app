@@ -112,6 +112,9 @@ const ProfileDetails = () => {
     return (
       <View className="flex-1 justify-center items-center">
         <Text>No profile data available.</Text>
+        <TouchableOpacity>
+          Try Again
+        </TouchableOpacity>
       </View>
     );
   }
