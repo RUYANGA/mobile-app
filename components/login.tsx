@@ -48,12 +48,11 @@ export default function Login() {
 
       const data = await response.json();
 
-      await AsyncStorage.setItem("token", data.token);
-
       if (!response.ok) {
         throw new Error(data.message || "Login failed");
       }
 
+      await AsyncStorage.setItem("token", data.token);
       router.push("/dashboard/home");
 
       ToastAndroid.showWithGravity(

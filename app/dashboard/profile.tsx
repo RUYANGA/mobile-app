@@ -135,6 +135,8 @@ const ProfileDetails = () => {
           {profile.username}
         </Text>
         <Text className="text-gray-600 text-base mt-1">{profile.email}</Text>
+        
+        <Text className="text-gray-600 text-base mt-1">Email verified :{profile.emailVerified ? "Yes" :"NO"}</Text>
         <Text className="text-gray-400 text-sm mt-1 p-2 gap-2">
           <Text> Member since </Text>
 
