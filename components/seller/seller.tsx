@@ -79,6 +79,8 @@ const products = generateProducts();
 const SellerProductPage = () => {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [visibleCount, setVisibleCount] = useState(5); // Initially show 5 products
+  const [showAllCategories, setShowAllCategories] = useState(false); // Show/hide extra categories
 
   // Memoize filtered products to avoid recalculation on every render
   const filteredProducts = useMemo(() => {
@@ -86,6 +88,21 @@ const SellerProductPage = () => {
       ? products 
       : products.filter(product => product.category === selectedCategory);
   }, [selectedCategory]);
+
+  // Memoize visible products based on visibleCount
+  const visibleProducts = useMemo(() => {
+    return filteredProducts.slice(0, visibleCount);
+  }, [filteredProducts, visibleCount]);
+
+  // Check if there are more products to load
+  const hasMoreProducts = filteredProducts.length > visibleCount;
+
+  // Get visible categories (show first 3, then all if showAllCategories is true)
+  const visibleCategories = useMemo(() => {
+    return showAllCategories ? categories : categories.slice(0, 3);
+  }, [showAllCategories]);
+
+  const hasMoreCategories = categories.length > 3;
 
   // Memoize navigation function
   const handleAddProduct = useCallback(() => {
@@ -95,6 +112,17 @@ const SellerProductPage = () => {
   // Memoize category selection
   const handleCategorySelect = useCallback((category: string) => {
     setSelectedCategory(category);
+    setVisibleCount(5); // Reset to 5 products when changing category
+  }, []);
+
+  // Handle load more products
+  const handleLoadMore = useCallback(() => {
+    setVisibleCount(prev => prev + 5); // Load 5 more products
+  }, []);
+
+  // Handle show more categories
+  const handleToggleCategories = useCallback(() => {
+    setShowAllCategories(prev => !prev);
   }, []);
 
   // Memoize product actions
@@ -184,68 +212,175 @@ const SellerProductPage = () => {
           </View>
 
           {/* Categories Section */}
-          <View style={{ marginBottom: 15 }}>
-            <Text style={{
-              fontSize: 18,
-              fontWeight: "600",
-              color: "#1f2937",
-              marginBottom: 12,
+          <View style={{ marginBottom: 20 }}>
+            <View style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: 16,
             }}>
-              Categories
-            </Text>
+              <Text style={{
+                fontSize: 18,
+                fontWeight: "700",
+                color: "#1f2937",
+              }}>
+                Categories
+              </Text>
+              <View style={{
+                backgroundColor: "#f1f5f9",
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+                borderRadius: 12,
+              }}>
+                <Text style={{
+                  fontSize: 12,
+                  color: "#64748b",
+                  fontWeight: "500",
+                }}>
+                  {showAllCategories ? categories.length + 1 : Math.min(3, categories.length) + 1} of {categories.length + 1}
+                </Text>
+              </View>
+            </View>
             
             <ScrollView 
               horizontal 
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingRight: 20 }}
+              contentContainerStyle={{ 
+                paddingRight: 30,
+                paddingLeft: 4,
+                paddingVertical: 4,
+              }}
+              style={{
+                marginHorizontal: -4,
+              }}
+              decelerationRate="fast"
+              snapToInterval={120}
+              snapToAlignment="start"
+              scrollEventThrottle={16}
             >
+              {/* All Products Button */}
               <TouchableOpacity
                 onPress={() => handleCategorySelect("All")}
                 style={{
-                  backgroundColor: selectedCategory === "All" ? "#3b82f6" : "#f1f5f9",
-                  paddingHorizontal: 16,
-                  paddingVertical: 10,
-                  borderRadius: 20,
-                  marginRight: 12,
-                  borderWidth: 1,
+                  backgroundColor: selectedCategory === "All" ? "#3b82f6" : "#ffffff",
+                  paddingHorizontal: 20,
+                  paddingVertical: 12,
+                  borderRadius: 25,
+                  marginRight: 14,
+                  borderWidth: 2,
                   borderColor: selectedCategory === "All" ? "#3b82f6" : "#e2e8f0",
+                  shadowColor: selectedCategory === "All" ? "#3b82f6" : "#000",
+                  shadowOffset: { width: 0, height: selectedCategory === "All" ? 4 : 2 },
+                  shadowOpacity: selectedCategory === "All" ? 0.3 : 0.1,
+                  shadowRadius: selectedCategory === "All" ? 8 : 4,
+                  elevation: selectedCategory === "All" ? 6 : 2,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  minWidth: 120,
+                  justifyContent: "center",
                 }}
               >
+                <Text style={{ marginRight: 8, fontSize: 16 }}>🏪</Text>
                 <Text style={{
                   color: selectedCategory === "All" ? "white" : "#475569",
-                  fontWeight: "500",
+                  fontWeight: selectedCategory === "All" ? "700" : "600",
                   fontSize: 14,
                 }}>
                   All Products
                 </Text>
               </TouchableOpacity>
               
-              {categories.map((cat) => (
+              {/* Category Buttons */}
+              {visibleCategories.map((cat) => (
                 <TouchableOpacity
                   key={cat.id}
                   onPress={() => handleCategorySelect(cat.name)}
                   style={{
-                    backgroundColor: selectedCategory === cat.name ? "#3b82f6" : "#f1f5f9",
-                    paddingHorizontal: 16,
-                    paddingVertical: 10,
-                    borderRadius: 20,
-                    marginRight: 12,
-                    borderWidth: 1,
+                    backgroundColor: selectedCategory === cat.name ? "#3b82f6" : "#ffffff",
+                    paddingHorizontal: 18,
+                    paddingVertical: 12,
+                    borderRadius: 25,
+                    marginRight: 14,
+                    borderWidth: 2,
                     borderColor: selectedCategory === cat.name ? "#3b82f6" : "#e2e8f0",
+                    shadowColor: selectedCategory === cat.name ? "#3b82f6" : "#000",
+                    shadowOffset: { width: 0, height: selectedCategory === cat.name ? 4 : 2 },
+                    shadowOpacity: selectedCategory === cat.name ? 0.3 : 0.1,
+                    shadowRadius: selectedCategory === cat.name ? 8 : 4,
+                    elevation: selectedCategory === cat.name ? 6 : 2,
                     flexDirection: "row",
                     alignItems: "center",
+                    minWidth: 100,
+                    justifyContent: "center",
                   }}
                 >
-                  <Text style={{ marginRight: 6, fontSize: 16 }}>{cat.icon}</Text>
+                  <Text style={{ 
+                    marginRight: 8, 
+                    fontSize: 16,
+                    transform: selectedCategory === cat.name ? [{ scale: 1.1 }] : [{ scale: 1 }],
+                  }}>
+                    {cat.icon}
+                  </Text>
                   <Text style={{
                     color: selectedCategory === cat.name ? "white" : "#475569",
-                    fontWeight: "500",
+                    fontWeight: selectedCategory === cat.name ? "700" : "600",
                     fontSize: 14,
                   }}>
                     {cat.name}
                   </Text>
                 </TouchableOpacity>
               ))}
+
+              {/* Show More Categories Button */}
+              {hasMoreCategories && (
+                <TouchableOpacity
+                  onPress={handleToggleCategories}
+                  style={{
+                    backgroundColor: "#f8fafc",
+                    paddingHorizontal: 18,
+                    paddingVertical: 12,
+                    borderRadius: 25,
+                    marginRight: 20,
+                    borderWidth: 2,
+                    borderColor: "#cbd5e1",
+                    borderStyle: "dashed",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.05,
+                    shadowRadius: 4,
+                    elevation: 1,
+                    minWidth: 90,
+                    justifyContent: "center",
+                  }}
+                >
+                  <View style={{
+                    backgroundColor: showAllCategories ? "#ef4444" : "#10b981",
+                    borderRadius: 10,
+                    width: 20,
+                    height: 20,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginRight: 8,
+                  }}>
+                    <Text style={{ 
+                      fontSize: 12, 
+                      color: "white",
+                      fontWeight: "bold",
+                    }}>
+                      {showAllCategories ? "−" : "+"}
+                    </Text>
+                  </View>
+                  <Text style={{
+                    color: "#64748b",
+                    fontWeight: "600",
+                    fontSize: 14,
+                  }}>
+                    {showAllCategories ? "Less" : "More"}
+                  </Text>
+                </TouchableOpacity>
+              )}
             </ScrollView>
           </View>
 
@@ -260,7 +395,7 @@ const SellerProductPage = () => {
               fontWeight: "600",
               color: "#1f2937",
             }}>
-              Products ({filteredProducts.length})
+              Products ({visibleProducts.length} of {filteredProducts.length})
             </Text>
             <TouchableOpacity>
               <Text style={{
@@ -281,7 +416,7 @@ const SellerProductPage = () => {
             flexWrap: "wrap",
             justifyContent: "space-between",
           }}>
-            {filteredProducts.map((product) => (
+            {visibleProducts.map((product) => (
               <View
                 key={product.id}
                 style={{
@@ -432,8 +567,59 @@ const SellerProductPage = () => {
             ))}
           </View>
 
+          {/* Load More Button */}
+          {hasMoreProducts && (
+            <View style={{ 
+              alignItems: "center", 
+              marginTop: 20,
+              marginBottom: 20 
+            }}>
+              <TouchableOpacity
+                onPress={handleLoadMore}
+                style={{
+                  backgroundColor: "#ffffff",
+                  paddingHorizontal: 24,
+                  paddingVertical: 12,
+                  borderRadius: 25,
+                  borderWidth: 2,
+                  borderColor: "#3b82f6",
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 4,
+                  elevation: 3,
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{
+                  color: "#3b82f6",
+                  fontWeight: "600",
+                  fontSize: 14,
+                  marginRight: 8,
+                }}>
+                  Load More Products
+                </Text>
+                <Text style={{
+                  color: "#3b82f6",
+                  fontSize: 16,
+                }}>
+                  ⬇️
+                </Text>
+              </TouchableOpacity>
+              
+              <Text style={{
+                fontSize: 12,
+                color: "#6b7280",
+                marginTop: 8,
+              }}>
+                Showing {visibleProducts.length} of {filteredProducts.length} products
+              </Text>
+            </View>
+          )}
+
           {/* Empty State */}
-          {filteredProducts.length === 0 && (
+          {visibleProducts.length === 0 && (
             <View style={{
               alignItems: "center",
               paddingVertical: 60,
