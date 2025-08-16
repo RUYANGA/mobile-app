@@ -28,7 +28,7 @@ const ProfileDetails = () => {
     name: "John Doe",
     email: "john.doe@example.com",
     phone: "+1 234 567 890",
-    address: "123 Main Street, New York, USA",
+    address: "Rwanda",
     avatar: "https://i.pravatar.cc/300",
     joined: "January 2024",
     orders: 12,
@@ -112,9 +112,7 @@ const ProfileDetails = () => {
     return (
       <View className="flex-1 justify-center items-center">
         <Text>No profile data available.</Text>
-        <TouchableOpacity>
-          Try Again
-        </TouchableOpacity>
+        <Text>Try Again</Text>
       </View>
     );
   }
@@ -138,8 +136,10 @@ const ProfileDetails = () => {
           {profile.username}
         </Text>
         <Text className="text-gray-600 text-base mt-1">{profile.email}</Text>
-        
-        <Text className="text-gray-600 text-base mt-1">Email verified :{profile.emailVerified ? "Yes" :"NO"}</Text>
+
+        <Text className="text-gray-600 text-base mt-1">
+          Email verified :{profile.emailVerified ? "Yes" : "NO"}
+        </Text>
         <Text className="text-gray-400 text-sm mt-1 p-2 gap-2">
           <Text> Member since </Text>
 

@@ -27,8 +27,6 @@ export default function CreateProduct() {
       );
       return;
     }
-
-    // Launch image library (new syntax for mediaTypes)
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"], // ✅ Updated to avoid deprecated MediaTypeOptions
       allowsEditing: true,
@@ -62,115 +60,141 @@ export default function CreateProduct() {
         backgroundColor: "#f9f9f9",
       }}
     >
-    
-<View className="flex-1 justify-center ">
+      <View className="flex-1 justify-center ">
+        {/* Title */}
+        <Text
+          style={{
+            fontSize: 24,
+            fontWeight: "bold",
+            textAlign: "center",
+            marginBottom: 15,
+          }}
+        >
+          Create Product
+        </Text>
 
-      {/* Title */}
-      <Text
-        style={{
-          fontSize: 24,
-          fontWeight: "bold",
-          textAlign: "center",
-          marginBottom: 15,
-        }}
-      >
-        Create Product
-      </Text>
-
-      {/* Form */}
-      <View
-        style={{
-          backgroundColor: "#fff",
-          borderRadius: 12,
-          padding: 15,
-          shadowColor: "#000",
-          shadowOpacity: 0.4,
-          shadowRadius: 6,
-        }}
-      >
-        <Text className="mb-3">Name Product</Text>
-        <TextInput
-          placeholder="Product Name"
-          value={productName}
-          onChangeText={setProductName}
+        {/* Form */}
+        <View
           style={{
-            borderWidth: 1,
-            borderColor: "#ccc",
-            borderRadius: 8,
-            padding: 10,
-            marginBottom: 10,
+            backgroundColor: "#fff",
+            borderRadius: 12,
+            padding: 15,
+            shadowColor: "#000",
+            shadowOpacity: 0.4,
+            shadowRadius: 6,
           }}
-        />
-        <Text className="mb-3">Price</Text>
-        <TextInput
-          placeholder="Price"
-          keyboardType="numeric"
-          value={price}
-          onChangeText={setPrice}
-          style={{
-            borderWidth: 1,
-            borderColor: "#ccc",
-            borderRadius: 8,
-            padding: 10,
-            marginBottom: 10,
-          }}
-        />
-        <Text className="mb-3">Descriptions</Text>
-        <TextInput
-          placeholder="Description"
-          multiline
-          numberOfLines={4}
-          value={description}
-          onChangeText={setDescription}
-          style={{
-            borderWidth: 1,
-            borderColor: "#ccc",
-            borderRadius: 8,
-            padding: 10,
-            marginBottom: 20,
-            height: 80,
-          }}
-        />
+        >
+          <Text className="mb-3">Product Name</Text>
+          <TextInput
+            placeholder="ex: Banna"
+            value={productName}
+            onChangeText={setProductName}
+            style={{
+              borderWidth: 1,
+              borderColor: "#ccc",
+              borderRadius: 8,
+              padding: 10,
+              marginBottom: 10,
+            }}
+          />
+          <Text className="mb-3">Price</Text>
+          <TextInput
+            placeholder="ex: 7000 frw"
+            keyboardType="numeric"
+            value={price}
+            onChangeText={setPrice}
+            style={{
+              borderWidth: 1,
+              borderColor: "#ccc",
+              borderRadius: 8,
+              padding: 10,
+              marginBottom: 10,
+            }}
+          />
+          <Text className="mb-3">Unit</Text>
+          <TextInput
+            placeholder="ex: 6"
+            keyboardType="numeric"
+            value={price}
+            onChangeText={setPrice}
+            style={{
+              borderWidth: 1,
+              borderColor: "#ccc",
+              borderRadius: 8,
+              padding: 10,
+              marginBottom: 10,
+            }}
+          />
+          <Text className="mb-3">Quantity (optional)</Text>
+          <TextInput
+            placeholder="ex: 45kg"
+            keyboardType="numeric"
+            value={price}
+            onChangeText={setPrice}
+            style={{
+              borderWidth: 1,
+              borderColor: "#ccc",
+              borderRadius: 8,
+              padding: 10,
+              marginBottom: 10,
+            }}
+          />
+          <Text className="mb-3">Descriptions</Text>
+          <TextInput
+            placeholder="Describe your product here..."
+            multiline
+            numberOfLines={4}
+            value={description}
+            onChangeText={setDescription}
+            style={{
+              borderWidth: 1,
+              borderColor: "#ccc",
+              borderRadius: 8,
+              padding: 8,
+              marginBottom: 20,
+              height:50,
+            }}
+          />
 
           {/* Image Picker */}
-        
-      <TouchableOpacity
-        onPress={pickImage}
-        style={{ alignItems: "center", marginBottom: 20 }}
-      >
-        {image ? (
-          <Image
-            source={{ uri: image }}
-            style={{ width: 160, height: 100, borderRadius: 10 }}
-          />
-        ) : (
-          <View
-            style={{
-              width: 180,
-              height: 30,
-              backgroundColor: "#ddd",
-              borderRadius: 10,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Text style={{ color: "#555" }}>Tap to Upload Image</Text>
-          </View>
-        )}
-      </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={handleCreateProduct}
-          style={{ backgroundColor: "#007BFF", padding: 12, borderRadius: 8 }}
-        >
-          <Text
-            style={{ color: "#fff", textAlign: "center", fontWeight: "bold" }}
+          <TouchableOpacity
+            onPress={pickImage}
+            style={{ alignItems: "center", marginBottom: 20 }}
           >
-            Create Product
-          </Text>
-        </TouchableOpacity>
+            {image ? (
+              <Image
+                source={{ uri: image }}
+                style={{ width: 160, height: 180, borderRadius: 10 }}
+              />
+            ) : (
+              <View
+                style={{
+                  width: 190,
+                  height: 40,
+                  backgroundColor: "#ddd",
+                  borderRadius: 10,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: "#555" }}>Tap to Upload Image</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={handleCreateProduct}
+            style={{ backgroundColor: "#007BFF", padding: 12, borderRadius: 8 }}
+          >
+            <Text
+              style={{ color: "#fff", textAlign: "center", fontWeight: "bold" }}
+            >
+              Create Product
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
-</View>
     </ScrollView>
   );
 }
