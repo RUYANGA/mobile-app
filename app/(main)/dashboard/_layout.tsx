@@ -18,7 +18,7 @@ export default function DashboardLayout() {
       />
        <Tabs.Screen
         name="profile"
-        options={{ title: "Profile", tabBarIcon: () => <Text>👤</Text> }}
+        options={{ title: "Setting", tabBarIcon: () => <Text>👤</Text> }}
       />
     </Tabs>
   );
