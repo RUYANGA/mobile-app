@@ -152,7 +152,7 @@ const SellerProductPage = () => {
         <View
           style={{
             backgroundColor: "#ffffff",
-            paddingTop: 20,
+            paddingTop: 10,
             paddingHorizontal: 20,
             paddingBottom: 7,
             shadowColor: "#000",
