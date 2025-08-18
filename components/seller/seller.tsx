@@ -144,7 +144,7 @@ const SellerProductPage = () => {
       <StatusBar barStyle="dark-content" backgroundColor="#f8fafc" />
       
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerStyle={{ paddingBottom: 60 }}
         showsVerticalScrollIndicator={false}
         stickyHeaderIndices={[0]}
       >
@@ -152,9 +152,9 @@ const SellerProductPage = () => {
         <View
           style={{
             backgroundColor: "#ffffff",
-            paddingTop: 50,
+            paddingTop: 20,
             paddingHorizontal: 20,
-            paddingBottom: 15,
+            paddingBottom: 7,
             shadowColor: "#000",
             shadowOffset: { width: 0, height: 2 },
             shadowOpacity: 0.1,
@@ -170,45 +170,6 @@ const SellerProductPage = () => {
             alignItems: "center",
             marginBottom: 20,
           }}>
-            <View>
-              <Text style={{
-                fontSize: 24,
-                fontWeight: "bold",
-                color: "#1f2937",
-                marginBottom: 4,
-              }}>
-                Seller Dashboard
-              </Text>
-              <Text style={{
-                fontSize: 14,
-                color: "#6b7280",
-              }}>
-                Manage your products and sales
-              </Text>
-            </View>
-            
-            <TouchableOpacity
-              onPress={handleAddProduct}
-              style={{
-                backgroundColor: "#3b82f6",
-                paddingHorizontal: 16,
-                paddingVertical: 12,
-                borderRadius: 12,
-                shadowColor: "#3b82f6",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.3,
-                shadowRadius: 8,
-                elevation: 6,
-              }}
-            >
-              <Text style={{
-                color: "white",
-                fontWeight: "600",
-                fontSize: 14,
-              }}>
-                + Add Product
-              </Text>
-            </TouchableOpacity>
           </View>
 
           {/* Categories Section */}
@@ -219,27 +180,6 @@ const SellerProductPage = () => {
               alignItems: "center",
               marginBottom: 16,
             }}>
-              <Text style={{
-                fontSize: 18,
-                fontWeight: "700",
-                color: "#1f2937",
-              }}>
-                Categories
-              </Text>
-              <View style={{
-                backgroundColor: "#f1f5f9",
-                paddingHorizontal: 12,
-                paddingVertical: 6,
-                borderRadius: 12,
-              }}>
-                <Text style={{
-                  fontSize: 12,
-                  color: "#64748b",
-                  fontWeight: "500",
-                }}>
-                  {showAllCategories ? categories.length + 1 : Math.min(3, categories.length) + 1} of {categories.length + 1}
-                </Text>
-              </View>
             </View>
             
             <ScrollView 
@@ -264,7 +204,7 @@ const SellerProductPage = () => {
                 style={{
                   backgroundColor: selectedCategory === "All" ? "#3b82f6" : "#ffffff",
                   paddingHorizontal: 20,
-                  paddingVertical: 12,
+                  paddingVertical: 6,
                   borderRadius: 25,
                   marginRight: 14,
                   borderWidth: 2,
