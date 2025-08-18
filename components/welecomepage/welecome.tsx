@@ -6,7 +6,7 @@ const WelcomePage = () => {
   const router = useRouter();
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#f8fafc" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#f8fafc" ,marginTop:40}}>
       <StatusBar barStyle="dark-content" backgroundColor="#f8fafc" />
       
       <ScrollView 
@@ -80,25 +80,7 @@ const WelcomePage = () => {
               overflow: "hidden",
             }}
           >
-            {/* Premium Badge */}
-            <View style={{
-              position: "absolute",
-              top: 20,
-              right: 20,
-              backgroundColor: "#fbbf24",
-              paddingHorizontal: 12,
-              paddingVertical: 6,
-              borderRadius: 12,
-            }}>
-              <Text style={{
-                color: "white",
-                fontSize: 12,
-                fontWeight: "700",
-                textTransform: "uppercase",
-              }}>
-                Recommended
-              </Text>
-            </View>
+          
 
             {/* Plan Header */}
             <View style={{ 
@@ -119,14 +101,23 @@ const WelcomePage = () => {
               </View>
               
               <View style={{ flex: 1 }}>
-                <Text style={{
-                  fontSize: 24,
-                  fontWeight: "800",
-                  color: "#1f2937",
+                <View style={{
+                  flexDirection: "row",
+                  alignItems: "baseline",
                   marginBottom: 4,
                 }}>
-                  Premium Plan
-                </Text>
+                  <Text style={{
+                    fontSize: 24,
+                    fontWeight: "800",
+                    color: "#1f2937",
+                    marginRight: 8,
+                    marginTop:7
+                  }}>
+                    Premium Plan
+                  </Text>
+              
+                
+                </View>
                 <Text style={{
                   fontSize: 14,
                   color: "#6b7280",
@@ -184,7 +175,7 @@ const WelcomePage = () => {
                 fontSize: 16,
                 fontWeight: "700",
               }}>
-                Start Premium Experience
+                Start Premium - $10/month
               </Text>
             </View>
           </TouchableOpacity>
@@ -225,14 +216,34 @@ const WelcomePage = () => {
               </View>
               
               <View style={{ flex: 1 }}>
-                <Text style={{
-                  fontSize: 24,
-                  fontWeight: "800",
-                  color: "#1f2937",
+                <View style={{
+                  flexDirection: "row",
+                  alignItems: "baseline",
                   marginBottom: 4,
                 }}>
-                  Free Plan
-                </Text>
+                  <Text style={{
+                    fontSize: 24,
+                    fontWeight: "800",
+                    color: "#1f2937",
+                    marginRight: 8,
+                  }}>
+                    Free Plan
+                  </Text>
+                  <Text style={{
+                    fontSize: 20,
+                    fontWeight: "700",
+                    color: "#10b981",
+                  }}>
+                    $0
+                  </Text>
+                  <Text style={{
+                    fontSize: 14,
+                    color: "#6b7280",
+                    marginLeft: 2,
+                  }}>
+                    /month
+                  </Text>
+                </View>
                 <Text style={{
                   fontSize: 14,
                   color: "#6b7280",
@@ -289,7 +300,7 @@ const WelcomePage = () => {
                 fontSize: 16,
                 fontWeight: "700",
               }}>
-                Start Free Trial
+                Start Free - $0/month
               </Text>
             </View>
           </TouchableOpacity>

@@ -1,17 +1,18 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  ActivityIndicator,
-  Alert,
-  ToastAndroid,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import { Image } from "expo-image";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+  StatusBar,
+  Text,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 interface UserProfile {
   id: string;
@@ -37,206 +38,649 @@ const ProfileDetails = () => {
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const token = await AsyncStorage.getItem("token");
-        if (!token) {
-          Alert.alert("Error", "No token found, please login again.");
-          setLoading(false);
-          return;
+  const fetchProfile = async (isRefresh = false) => {
+    try {
+      if (isRefresh) {
+        setRefreshing(true);
+        setError(null);
+      } else {
+        setLoading(true);
+      }
+
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        const errorMsg = "No token found, please login again.";
+        Alert.alert("Error", errorMsg);
+        setError(errorMsg);
+        if (isRefresh) setRefreshing(false);
+        else setLoading(false);
+        return;
+      }
+
+      const response = await axios.get<UserProfile>(
+        "https://e-market-api-0k8r.onrender.com/auth/profile",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
+      );
 
-        const response = await axios.get<UserProfile>(
-          "https://e-market-api-0k8r.onrender.com/auth/profile",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        setProfile(response.data);
-      } catch (err) {
-        let message = "Failed to fetch profile.";
-        if (axios.isAxiosError(err)) {
+      setProfile(response.data);
+      setError(null);
+    } catch (err) {
+      let message = "Failed to fetch profile.";
+      if (axios.isAxiosError(err)) {
+        if (err.code === 'NETWORK_ERROR' || !err.response) {
+          message = "Network error. Please check your internet connection and try again.";
+        } else {
           message = err.response?.data?.message ?? err.message;
-        } else if (err instanceof Error) {
-          message = err.message;
         }
+      } else if (err instanceof Error) {
+        message = err.message;
+      }
+      
+      setError(message);
+      if (!isRefresh) {
         Alert.alert("Error", message);
-      } finally {
+      } else {
+        ToastAndroid.showWithGravity(
+          message,
+          ToastAndroid.SHORT,
+          ToastAndroid.BOTTOM
+        );
+      }
+    } finally {
+      if (isRefresh) {
+        setRefreshing(false);
+      } else {
         setLoading(false);
       }
-    };
+    }
+  };
 
+  useEffect(() => {
     fetchProfile();
   }, []);
 
   const handleLogout = async () => {
-    try {
-      await AsyncStorage.removeItem("token");
-      await AsyncStorage.removeItem("userId");
+    Alert.alert(
+      "Confirm Logout",
+      "Are you sure you want to logout?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Logout",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await AsyncStorage.removeItem("token");
+              await AsyncStorage.removeItem("userId");
 
-      ToastAndroid.showWithGravity(
-        "You have been logged out successfully.",
-        ToastAndroid.SHORT,
-        ToastAndroid.BOTTOM
-      );
+              ToastAndroid.showWithGravity(
+                "You have been logged out successfully.",
+                ToastAndroid.SHORT,
+                ToastAndroid.BOTTOM
+              );
 
-      router.replace("/login");
-    } catch (error) {
-      console.error("Error logging out:", error);
-      ToastAndroid.showWithGravity(
-        "Something went wrong while logging out.",
-        ToastAndroid.SHORT,
-        ToastAndroid.BOTTOM
-      );
-    }
+              router.replace("/login");
+            } catch (error) {
+              console.error("Error logging out:", error);
+              ToastAndroid.showWithGravity(
+                "Something went wrong while logging out.",
+                ToastAndroid.SHORT,
+                ToastAndroid.BOTTOM
+              );
+            }
+          },
+        },
+      ]
+    );
   };
 
   if (loading) {
     return (
-      <ActivityIndicator
-        size="large"
-        color="#0000ff"
-        className="flex-1 justify-center items-center"
-      />
+      <View style={{
+        flex: 1,
+        backgroundColor: "#f8fafc",
+        justifyContent: "center",
+        alignItems: "center",
+      }}>
+        <StatusBar barStyle="dark-content" backgroundColor="#f8fafc" />
+        <ActivityIndicator size="large" color="#3b82f6" />
+        <Text style={{
+          marginTop: 16,
+          fontSize: 16,
+          color: "#6b7280",
+        }}>
+          Loading profile...
+        </Text>
+      </View>
     );
   }
 
-  if (!profile) {
+  if (!profile || error) {
     return (
-      <View className="flex-1 justify-center items-center">
-        <Text>No profile data available.</Text>
-        <Text>Try Again</Text>
+      <View style={{
+        flex: 1,
+        backgroundColor: "#f8fafc",
+        justifyContent: "center",
+        alignItems: "center",
+        paddingHorizontal: 40,
+      }}>
+        <StatusBar barStyle="dark-content" backgroundColor="#f8fafc" />
+        
+        {/* Error Icon */}
+        <View style={{
+          backgroundColor: "#fef2f2",
+          borderRadius: 50,
+          width: 100,
+          height: 100,
+          alignItems: "center",
+          justifyContent: "center",
+          marginBottom: 24,
+        }}>
+          <Text style={{ fontSize: 48 }}>�</Text>
+        </View>
+
+        <Text style={{
+          fontSize: 24,
+          fontWeight: "800",
+          color: "#1f2937",
+          textAlign: "center",
+          marginBottom: 8,
+        }}>
+          Connection Problem
+        </Text>
+        
+        <Text style={{
+          fontSize: 16,
+          color: "#6b7280",
+          textAlign: "center",
+          marginBottom: 8,
+          lineHeight: 22,
+        }}>
+          {error || "We couldn't load your profile data."}
+        </Text>
+        
+        <Text style={{
+          fontSize: 14,
+          color: "#9ca3af",
+          textAlign: "center",
+          marginBottom: 32,
+        }}>
+          Please check your internet connection and try again.
+        </Text>
+
+        {/* Action Buttons */}
+        <View style={{ width: "100%", alignItems: "center" }}>
+          <TouchableOpacity
+            onPress={() => fetchProfile(true)}
+            disabled={refreshing}
+            style={{
+              backgroundColor: "#3b82f6",
+              paddingHorizontal: 32,
+              paddingVertical: 16,
+              borderRadius: 16,
+              marginBottom: 12,
+              shadowColor: "#3b82f6",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.3,
+              shadowRadius: 8,
+              elevation: 6,
+              flexDirection: "row",
+              alignItems: "center",
+              opacity: refreshing ? 0.7 : 1,
+            }}
+          >
+            {refreshing ? (
+              <ActivityIndicator size="small" color="white" style={{ marginRight: 8 }} />
+            ) : (
+              <Text style={{ fontSize: 16, marginRight: 8 }}>🔄</Text>
+            )}
+            <Text style={{
+              color: "white",
+              fontWeight: "700",
+              fontSize: 16,
+            }}>
+              {refreshing ? "Refreshing..." : "Try Again"}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => router.replace("/(auth)/login")}
+            style={{
+              backgroundColor: "transparent",
+              paddingHorizontal: 24,
+              paddingVertical: 12,
+              borderRadius: 12,
+              borderWidth: 2,
+              borderColor: "#d1d5db",
+            }}
+          >
+            <Text style={{
+              color: "#6b7280",
+              fontWeight: "600",
+              fontSize: 14,
+            }}>
+              Go to Login
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
 
   return (
-    <ScrollView className="flex-1 bg-white p-6 ">
-      {/* Profile Header */}
-      <View className="items-center mt-12">
-        <Image
-          source={{ uri: user.avatar }}
-          style={{
-            width: 130,
-            height: 130,
-            borderRadius: 65,
-            borderWidth: 2,
-            borderColor: "#3b82f6", // blue-500
-          }}
-          contentFit="cover"
-        />
-        <Text className="text-3xl font-extrabold mt-5 text-gray-900">
-          {profile.username}
-        </Text>
-        <Text className="text-gray-600 text-base mt-1">{profile.email}</Text>
+    <View style={{ flex: 1, backgroundColor: "#f8fafc" }}>
+      <StatusBar barStyle="dark-content" backgroundColor="#f8fafc" />
+      
+      <ScrollView 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
+        {/* Header Background */}
+        <View style={{
+          backgroundColor: "#3b82f6",
+          paddingTop: 60,
+          paddingBottom: 100,
+          paddingHorizontal: 24,
+          borderBottomLeftRadius: 30,
+          borderBottomRightRadius: 30,
+        }}>
+          <View style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 20,
+          }}>
+            <Text style={{
+              fontSize: 24,
+              fontWeight: "800",
+              color: "white",
+            }}>
+              My Profile
+            </Text>
+            <TouchableOpacity
+              style={{
+                backgroundColor: "rgba(255,255,255,0.2)",
+                padding: 8,
+                borderRadius: 12,
+              }}
+            >
+              <Text style={{ fontSize: 20 }}>⚙️</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
 
-        <Text className="text-gray-600 text-base mt-1">
-          Email verified :{profile.emailVerified ? "Yes" : "NO"}
-        </Text>
-        <Text className="text-gray-400 text-sm mt-1 p-2 gap-2">
-          <Text> Member since </Text>
+        {/* Profile Card */}
+        <View style={{
+          marginHorizontal: 24,
+          marginTop: -60,
+          backgroundColor: "white",
+          borderRadius: 24,
+          padding: 32,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 8 },
+          shadowOpacity: 0.1,
+          shadowRadius: 16,
+          elevation: 8,
+          alignItems: "center",
+        }}>
+          {/* Avatar */}
+          <View style={{
+            position: "relative",
+            marginBottom: 20,
+          }}>
+            <Image
+              source={{ uri: user.avatar }}
+              style={{
+                width: 120,
+                height: 120,
+                borderRadius: 60,
+                borderWidth: 4,
+                borderColor: "#3b82f6",
+              }}
+              contentFit="cover"
+            />
+            {profile.emailVerified && (
+              <View style={{
+                position: "absolute",
+                bottom: 4,
+                right: 4,
+                backgroundColor: "#10b981",
+                borderRadius: 12,
+                width: 24,
+                height: 24,
+                alignItems: "center",
+                justifyContent: "center",
+                borderWidth: 3,
+                borderColor: "white",
+              }}>
+                <Text style={{ fontSize: 12, color: "white" }}>✓</Text>
+              </View>
+            )}
+          </View>
 
-          <Text>
-            {new Date(profile.createdAt).toLocaleString("en-US", {
+          {/* User Info */}
+          <Text style={{
+            fontSize: 28,
+            fontWeight: "800",
+            color: "#1f2937",
+            marginBottom: 8,
+            textAlign: "center",
+          }}>
+            {profile.username}
+          </Text>
+          
+          <Text style={{
+            fontSize: 16,
+            color: "#6b7280",
+            marginBottom: 4,
+          }}>
+            {profile.email}
+          </Text>
+
+          <View style={{
+            flexDirection: "row",
+            alignItems: "center",
+            backgroundColor: profile.emailVerified ? "#dcfce7" : "#fef3c7",
+            paddingHorizontal: 12,
+            paddingVertical: 6,
+            borderRadius: 12,
+            marginBottom: 16,
+          }}>
+            <Text style={{ 
+              fontSize: 12,
+              marginRight: 4,
+            }}>
+              {profile.emailVerified ? "✅" : "⚠️"}
+            </Text>
+            <Text style={{
+              fontSize: 12,
+              fontWeight: "600",
+              color: profile.emailVerified ? "#16a34a" : "#d97706",
+            }}>
+              {profile.emailVerified ? "Verified Account" : "Unverified Account"}
+            </Text>
+          </View>
+
+          <Text style={{
+            fontSize: 14,
+            color: "#9ca3af",
+            textAlign: "center",
+          }}>
+            Member since {new Date(profile.createdAt).toLocaleDateString("en-US", {
               month: "long",
-              day: "numeric",
               year: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: true,
             })}
           </Text>
-        </Text>
-      </View>
-
-      {/* Divider */}
-      <View className="border-b border-gray-300 my-8" />
-
-      {/* Contact Info */}
-      <View
-        className="bg-white rounded-xl p-5 shadow-md"
-        style={{ elevation: 3 }}
-      >
-        <Text className="text-xl font-semibold text-gray-800 mb-4">
-          Contact Information
-        </Text>
-        <View className="flex-row items-center mb-3">
-          <Text className="text-2xl mr-3">📞</Text>
-          <Text className="text-gray-700 text-base">{profile.phone}</Text>
         </View>
-        <View className="flex-row items-center">
-          <Text className="text-2xl mr-3">🏠</Text>
-          <Text className="text-gray-700 text-base">{user.address}</Text>
+
+        {/* Stats Cards */}
+        <View style={{
+          flexDirection: "row",
+          paddingHorizontal: 24,
+          marginTop: 24,
+          gap: 12,
+        }}>
+          <View style={{
+            flex: 1,
+            backgroundColor: "white",
+            borderRadius: 16,
+            padding: 20,
+            alignItems: "center",
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.1,
+            shadowRadius: 8,
+            elevation: 4,
+          }}>
+            <Text style={{
+              fontSize: 32,
+              fontWeight: "800",
+              color: "#3b82f6",
+              marginBottom: 4,
+            }}>
+              {user.orders}
+            </Text>
+            <Text style={{
+              fontSize: 14,
+              color: "#6b7280",
+              fontWeight: "500",
+            }}>
+              Orders
+            </Text>
+          </View>
+
+          <View style={{
+            flex: 1,
+            backgroundColor: "white",
+            borderRadius: 16,
+            padding: 20,
+            alignItems: "center",
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.1,
+            shadowRadius: 8,
+            elevation: 4,
+          }}>
+            <Text style={{
+              fontSize: 32,
+              fontWeight: "800",
+              color: "#ef4444",
+              marginBottom: 4,
+            }}>
+              {user.wishlist}
+            </Text>
+            <Text style={{
+              fontSize: 14,
+              color: "#6b7280",
+              fontWeight: "500",
+            }}>
+              Wishlist
+            </Text>
+          </View>
         </View>
-      </View>
 
-      {/* Divider */}
-      <View className="border-b border-gray-300 my-8" />
-
-      {/* Account Summary */}
-      <View
-        className="bg-white rounded-xl p-5 shadow-md flex-row justify-around"
-        style={{ elevation: 3 }}
-      >
-        <View className="items-center">
-          <Text className="text-3xl font-bold text-gray-900">
-            {user.orders}
+        {/* Contact Info */}
+        <View style={{
+          marginHorizontal: 24,
+          marginTop: 24,
+          backgroundColor: "white",
+          borderRadius: 20,
+          padding: 24,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.1,
+          shadowRadius: 8,
+          elevation: 4,
+        }}>
+          <Text style={{
+            fontSize: 20,
+            fontWeight: "700",
+            color: "#1f2937",
+            marginBottom: 20,
+          }}>
+            Contact Information
           </Text>
-          <Text className="text-gray-600 text-sm mt-1">Orders</Text>
+          
+          <View style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: 16,
+          }}>
+            <View style={{
+              backgroundColor: "#dbeafe",
+              borderRadius: 12,
+              width: 40,
+              height: 40,
+              alignItems: "center",
+              justifyContent: "center",
+              marginRight: 16,
+            }}>
+              <Text style={{ fontSize: 18 }}>📞</Text>
+            </View>
+            <View>
+              <Text style={{
+                fontSize: 14,
+                color: "#6b7280",
+                marginBottom: 2,
+              }}>
+                Phone Number
+              </Text>
+              <Text style={{
+                fontSize: 16,
+                fontWeight: "600",
+                color: "#1f2937",
+              }}>
+                {profile.phone || "Not provided"}
+              </Text>
+            </View>
+          </View>
+
+          <View style={{
+            flexDirection: "row",
+            alignItems: "center",
+          }}>
+            <View style={{
+              backgroundColor: "#dcfce7",
+              borderRadius: 12,
+              width: 40,
+              height: 40,
+              alignItems: "center",
+              justifyContent: "center",
+              marginRight: 16,
+            }}>
+              <Text style={{ fontSize: 18 }}>🏠</Text>
+            </View>
+            <View>
+              <Text style={{
+                fontSize: 14,
+                color: "#6b7280",
+                marginBottom: 2,
+              }}>
+                Location
+              </Text>
+              <Text style={{
+                fontSize: 16,
+                fontWeight: "600",
+                color: "#1f2937",
+              }}>
+                {user.address}
+              </Text>
+            </View>
+          </View>
         </View>
-        <View className="items-center">
-          <Text className="text-3xl font-bold text-gray-900">
-            {user.wishlist}
+
+        {/* Action Buttons */}
+        <View style={{
+          paddingHorizontal: 24,
+          marginTop: 24,
+        }}>
+          <Text style={{
+            fontSize: 20,
+            fontWeight: "700",
+            color: "#1f2937",
+            marginBottom: 16,
+          }}>
+            Account Settings
           </Text>
-          <Text className="text-gray-600 text-sm mt-1">Wishlist</Text>
+
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={{
+              backgroundColor: "#3b82f6",
+              borderRadius: 16,
+              paddingVertical: 16,
+              paddingHorizontal: 24,
+              marginBottom: 12,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              shadowColor: "#3b82f6",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.3,
+              shadowRadius: 8,
+              elevation: 6,
+            }}
+          >
+            <Text style={{ fontSize: 18, marginRight: 12 }}>✏️</Text>
+            <Text style={{
+              color: "white",
+              fontSize: 16,
+              fontWeight: "700",
+            }}>
+              Edit Profile
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={{
+              backgroundColor: "#f59e0b",
+              borderRadius: 16,
+              paddingVertical: 16,
+              paddingHorizontal: 24,
+              marginBottom: 12,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              shadowColor: "#f59e0b",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.3,
+              shadowRadius: 8,
+              elevation: 6,
+            }}
+          >
+            <Text style={{ fontSize: 18, marginRight: 12 }}>🔐</Text>
+            <Text style={{
+              color: "white",
+              fontSize: 16,
+              fontWeight: "700",
+            }}>
+              Change Password
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={handleLogout}
+            activeOpacity={0.8}
+            style={{
+              backgroundColor: "#ef4444",
+              borderRadius: 16,
+              paddingVertical: 16,
+              paddingHorizontal: 24,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              shadowColor: "#ef4444",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.3,
+              shadowRadius: 8,
+              elevation: 6,
+            }}
+          >
+            <Text style={{ fontSize: 18, marginRight: 12 }}>🚪</Text>
+            <Text style={{
+              color: "white",
+              fontSize: 16,
+              fontWeight: "700",
+            }}>
+              Logout
+            </Text>
+          </TouchableOpacity>
         </View>
-      </View>
-
-      {/* Divider */}
-      <View className="border-b border-gray-300 my-8" />
-
-      {/* Account Settings */}
-      <View>
-        <Text className="text-xl font-semibold mb-4 text-gray-800">
-          Account Settings
-        </Text>
-
-        <TouchableOpacity
-          activeOpacity={0.7}
-          className="bg-blue-600 py-4 rounded-xl mb-4"
-        >
-          <Text className="text-white text-center font-semibold text-lg">
-            Edit Profile
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          activeOpacity={0.7}
-          className="bg-yellow-500 py-4 rounded-xl mb-4"
-        >
-          <Text className="text-white text-center font-semibold text-lg">
-            Change Password
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={handleLogout}
-          activeOpacity={0.7}
-          className="bg-red-600 py-4 rounded-xl mb-20"
-        >
-          <Text className="text-white text-center font-semibold text-lg">
-            Logout
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 

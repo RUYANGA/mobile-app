@@ -3,19 +3,19 @@ import { AntDesign } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image } from "expo-image";
 import { Link, useRouter } from "expo-router";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  Text,
-  TextInput,
-  ToastAndroid,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    KeyboardAvoidingView,
+    Platform,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    Text,
+    TextInput,
+    ToastAndroid,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 export default function Login() {
@@ -63,7 +63,7 @@ export default function Login() {
     if (!password.trim()) {
       setPasswordError("Password is required");
       hasError = true;
-    } else if (password.length < 4) {
+    } else if (password.length < 6) {
       setPasswordError("Password must be at least 6 characters");
       hasError = true;
     }
@@ -204,8 +204,8 @@ export default function Login() {
                   borderRadius: 12,
                   borderWidth: 2,
                   borderColor: emailError ? "#ef4444" : email ? "#3b82f6" : "#e5e7eb",
-                  paddingHorizontal: 8,
-                  paddingVertical: 2,
+                  paddingHorizontal: 16,
+                  paddingVertical: 12,
                 }}>
                   <TextInput
                     placeholder="Enter your email"
@@ -263,8 +263,8 @@ export default function Login() {
                   borderRadius: 12,
                   borderWidth: 2,
                   borderColor: passwordError ? "#ef4444" : password ? "#3b82f6" : "#e5e7eb",
-                  paddingHorizontal: 8,
-                  paddingVertical: 2,
+                  paddingHorizontal: 16,
+                  paddingVertical: 12,
                   flexDirection: "row",
                   alignItems: "center",
                 }}>
