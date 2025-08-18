@@ -138,26 +138,7 @@ export default function Login() {
           }}>
             {/* Header Section */}
             <View style={{ alignItems: "center", marginBottom: 40 }}>
-              <View style={{
-                backgroundColor: "white",
-                borderRadius: 30,
-                padding: 20,
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 8 },
-                shadowOpacity: 0.1,
-                shadowRadius: 16,
-                elevation: 8,
-                marginBottom: 24,
-              }}>
-                <Image 
-                  source={logo1} 
-                  style={{ 
-                    width: 80, 
-                    height: 80,
-                  }}
-                  contentFit="contain"
-                />
-              </View>
+            
               
               <Text style={{
                 fontSize: 32,
